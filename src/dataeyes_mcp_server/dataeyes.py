@@ -2,11 +2,14 @@ from mcp.server.fastmcp import FastMCP
 import os
 from mcp.types import TextContent
 import httpx
+import logging
+import json
+
+
 
 # 创建MCP服务器实例
 mcp = FastMCP(
     name="dataeyes-mcp-server",
-    version="0.1.0",
     instructions="This is a MCP server for Dataeyes."
 )
 
@@ -24,21 +27,24 @@ api_url = "https://api.shuyanai.com"
 
 
 @mcp.tool(description="读取网页内容并返回大模型友好的 Markdown 格式")
-async def reader(url: str , timeout: int = 30) -> TextContent:
+async def reader(url: str, timeout: int = 30) -> str:
+
     """
     读取网页内容并返回大模型友好的 Markdown 格式
 
     Args:
         url (str): 要读取的网页链接.
-        timeout (int): 页面加载超时时间，单位为秒（1-60）.
+        timeout (int): 页面加载超时时间，单位为秒（1-60）。默认为 30 秒
 
     Returns:
-        types.TextContent: 返回包含网页内容的 Markdown 格式.
+        str: 返回包含网页内容的 Markdown 格式.
 
     """
 
 
     try:
+        if not api_key:
+            raise ValueError("请设置环境变量 DATAEYES_API_KEY, 获取方式请访问: https://shuyanai.com")
         reader_url = f"{api_url}/v1/reader"
 
         # 参数设置
@@ -58,15 +64,24 @@ async def reader(url: str , timeout: int = 30) -> TextContent:
             response.raise_for_status()
             result = response.json()
 
-        if result.get("status") != 0 :
-            error_msg = result.get("message", "unknown error")
-            raise Exception(f"API response error: {error_msg}")
+            # 检查返回码是否成功
+            if result.get("code") == 0 and "data" in result:
+                
+                return json.dumps(result["data"], ensure_ascii=False, indent=2)
+            else:
+                # 如果 code 不为 0 或 data 不存在，返回错误信息
+                error_msg = result.get("msg", "Unknown error from API")
+                return f"API Error: {error_msg}"
 
-        return TextContent(type="text", text=response.text)
 
     except httpx.HTTPError as e:
         raise Exception(f"HTTP request failed: {str(e)}") from e
+    except Exception as e:
+        logging.error(f"An unexpected error occurred in reader tool: {str(e)}")
+        return f"An unexpected error occurred: {str(e)}"
 
+def main():
+   mcp.run(transport="stdio")
 
 if __name__ == "__main__":
-    mcp.run(transport="stdio")
+    main()

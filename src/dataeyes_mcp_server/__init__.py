@@ -1,8 +1,4 @@
-from .dataeyes import mcp
-
-def main():
-    """MCP Dataeyes Server - HTTP call Dataeyes API for MCP"""
-    mcp.run(transport="stdio")
+import dataeyes_mcp_server.dataeyes
 
 if __name__ == "__main__":
-    main()
+    dataeyes_mcp_server.dataeyes.main()
