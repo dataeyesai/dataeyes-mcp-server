@@ -26,9 +26,16 @@ This service provides a set of tools that can be invoked through the MCP protoco
 The `reader` tool can access a web page URL and return the main content in a clean, LLM-friendly Markdown format.
 
 **Parameters:**
-
 - `url` (string, required): The URL of the web page to read.
 - `timeout` (integer, optional, default: 30): The page load timeout in seconds (range: 1-60).
+
+### 🔍 search
+
+The `search` tool allows you to search the internet and returns relevant web page summaries.
+
+**Parameters:**
+- `q` (string, required): The search query keywords.
+- `num` (integer, optional, default: 10): Number of search results to return (min: 1, max: 50).
 
 ## 🚀 Getting Started
 
