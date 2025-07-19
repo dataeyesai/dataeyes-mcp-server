@@ -26,11 +26,7 @@ api_key = os.getenv('DATAEYES_API_KEY')
 api_url = "https://api.shuyanai.com"
 
 
-@mcp.tool(description="读取网页内容并返回大模型友好的 Markdown 格式")
-async def reader(url: str, timeout: int = 30) -> str:
-
-    """
-    读取网页内容并返回大模型友好的 Markdown 格式
+@mcp.tool(description="""读取网页内容并返回大模型友好的 Markdown 格式
 
     Args:
         url (str): 要读取的网页链接.
@@ -39,7 +35,10 @@ async def reader(url: str, timeout: int = 30) -> str:
     Returns:
         str: 返回包含网页内容的 Markdown 格式.
 
-    """
+    """)
+async def reader(url: str, timeout: int = 30) -> str:
+
+    
 
 
     try:
@@ -81,21 +80,17 @@ async def reader(url: str, timeout: int = 30) -> str:
         return f"An unexpected error occurred: {str(e)}"
 
 
-@mcp.tool(description="搜索互联网并返回相关网页摘要")
-async def search(q: str, num: int = 10) -> str:
-
-    """
-    搜索互联网并返回相关网页摘要
+@mcp.tool(description="""搜索互联网并返回相关网页摘要
 
     Args:
         q (str): 搜索关键词.
-        timeout (int): 返回的搜索结果数量（默认10），最小为 1，最大为 50
+        num (int): 返回的搜索结果数量（默认10），最小为 1，最大为 50
 
     Returns:
         str: 返回相关网页摘要.
 
-    """
-
+    """)
+async def search(q: str, num: int = 10) -> str:
 
     try:
         if not api_key:
