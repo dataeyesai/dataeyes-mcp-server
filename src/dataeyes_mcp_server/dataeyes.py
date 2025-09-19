@@ -1,6 +1,5 @@
 from mcp.server.fastmcp import FastMCP
 import os
-from mcp.types import TextContent
 import httpx
 import logging
 import json
